@@ -13,7 +13,7 @@
                 </ul>
             </div>
             <div class="d-flex align-items-center gap-2 gap-lg-3">
-                <button type="button" class="btn btn-sm fw-bold btn-primary" id="btn-force-pinjam">
+                <button type="button" class="btn btn-sm fw-bold btn-primary d-none" id="btn-force-pinjam">
                     <i class="ki-duotone ki-plus fs-2"></i> Force Pinjam
                 </button>
             </div>
@@ -211,7 +211,20 @@
     @push('scripts')
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const API = '/api';
+        const userDataStr = localStorage.getItem('user_data');
+        let isAdmin = false;
+        if (userDataStr) {
+            const user = JSON.parse(userDataStr);
+            isAdmin = user.roles && user.roles.includes('admin');
+        }
+        
+        const API = isAdmin ? '/api/admin' : '/api/staff';
+
+        const btnForcePinjam = document.getElementById('btn-force-pinjam');
+        if (isAdmin && btnForcePinjam) {
+            btnForcePinjam.classList.remove('d-none');
+        }
+
         const tbody = document.getElementById('tbody-loans');
         const spinner = document.getElementById('loading-spinner');
         const emptyState = document.getElementById('empty-state');
@@ -236,7 +249,11 @@
         async function fetchLoans() {
             showLoading();
             try {
-                const res = await fetch(`${API}/admin/semua-loans`);
+                const token = localStorage.getItem('auth_token');
+                if (!token) { window.location.href = '/login'; return; }
+                const res = await fetch(`${API}/semua-loans`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
                 const json = await res.json();
                 if (json.success) {
                     allLoans = json.data;
@@ -248,7 +265,10 @@
 
         async function fetchMembers() {
             try {
-                const res = await fetch(`${API}/semua-members`);
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch(`/api/semua-members`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
                 const json = await res.json();
                 if (json.success) allMembers = json.data;
             } catch (e) { console.error(e); }
@@ -256,7 +276,10 @@
 
         async function fetchBooks() {
             try {
-                const res = await fetch(`${API}/semua-buku`);
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch(`/api/semua-buku`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
                 const json = await res.json();
                 if (json.success) allBooks = json.data;
             } catch (e) { console.error(e); }
@@ -324,7 +347,8 @@
                         <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Aksi <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
                         <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-175px py-4" data-kt-menu="true">
                             <div class="menu-item px-3"><a href="#" class="menu-link px-3" onclick="showDetail(${loan.id}); return false;"><i class="ki-duotone ki-eye fs-6 me-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Detail</a></div>
-                            ${loan.status === 'pending' ? `<div class="menu-item px-3"><a href="#" class="menu-link px-3 text-danger" onclick="batalkan(${loan.id}); return false;"><i class="ki-duotone ki-cross-circle fs-6 me-2"><span class="path1"></span><span class="path2"></span></i> Batalkan</a></div>` : ''}
+                            ${loan.status === 'pending' ? `<div class="menu-item px-3"><a href="#" class="menu-link px-3 text-success" onclick="approvePinjam(${loan.id}); return false;"><i class="ki-duotone ki-check-circle fs-6 me-2"><span class="path1"></span><span class="path2"></span></i> Approve Pinjam</a></div>` : ''}
+                            ${loan.status === 'pending' && isAdmin ? `<div class="menu-item px-3"><a href="#" class="menu-link px-3 text-danger" onclick="batalkan(${loan.id}); return false;"><i class="ki-duotone ki-cross-circle fs-6 me-2"><span class="path1"></span><span class="path2"></span></i> Batalkan</a></div>` : ''}
                         </div>
                     </td>
                 </tr>`;
@@ -364,9 +388,10 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch(`${API}/admin/force-pinjam`, {
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch(`/api/admin/force-pinjam`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
                     body: JSON.stringify({ member_id: memberId, book_id: bookId }),
                 });
                 const json = await res.json();
@@ -426,15 +451,48 @@
             }).then(async (r) => {
                 if (r.isConfirmed) {
                     try {
-                        const res = await fetch(`${API}/admin/batalkan-loan/${id}`, {
+                        const token = localStorage.getItem('auth_token');
+                        const res = await fetch(`/api/admin/batalkan-loan/${id}`, {
                             method: 'PUT',
-                            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+                            headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
                         });
                         const json = await res.json();
                         Swal.fire({ icon: 'success', title: 'Dibatalkan!', text: json.message, timer: 1500, showConfirmButton: false });
                         fetchLoans();
                     } catch (e) {
                         Swal.fire({ icon: 'error', title: 'Gagal', text: 'Tidak bisa membatalkan.' });
+                    }
+                }
+            });
+        };
+
+        window.approvePinjam = function (id) {
+            Swal.fire({
+                title: 'Approve peminjaman ini?',
+                text: "Pastikan buku fisik sudah diserahkan ke member.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Approve',
+                cancelButtonText: 'Batal',
+                customClass: { confirmButton: 'btn btn-success', cancelButton: 'btn btn-light' },
+            }).then(async (r) => {
+                if (r.isConfirmed) {
+                    try {
+                        const token = localStorage.getItem('auth_token');
+                        const res = await fetch(`/api/staff/approve-pinjam/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
+                        });
+                        const json = await res.json();
+                        if (json.success) {
+                            Swal.fire({ icon: 'success', title: 'Berhasil!', text: json.message, timer: 1500, showConfirmButton: false });
+                            fetchLoans();
+                            fetchBooks();
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Gagal', text: json.message });
+                        }
+                    } catch (e) {
+                        Swal.fire({ icon: 'error', title: 'Gagal', text: 'Tidak bisa melakukan approve.' });
                     }
                 }
             });

@@ -28,7 +28,14 @@
                             <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
                                 <span class="path1"></span><span class="path2"></span>
                             </i>
-                            <input type="text" class="form-control form-control-solid w-250px ps-13" placeholder="Cari member..." />
+                            <input type="text" class="form-control form-control-solid w-250px ps-13" placeholder="Cari member..." id="search_input"/>
+                        </div>
+                    </div>
+                    <div class="card-toolbar">
+                        <div class="d-flex justify-content-end align-items-center gap-3">
+                            <button type="button" class="btn btn-light-primary" onclick="fetchMembers()">
+                                <i class="ki-duotone ki-arrows-loop fs-2"><span class="path1"></span><span class="path2"></span></i> Refresh
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -39,32 +46,12 @@
                                 <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                                     <th>Member ID</th>
                                     <th>Nama Lengkap</th>
-                                    <th>Email</th>
                                     <th>No. HP</th>
-                                    <th>Status</th>
+                                    <th>Alamat</th>
                                     <th class="text-end">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="fw-bold text-gray-800">MBR-0001</span></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                <div class="symbol-label fs-3 bg-light-primary text-primary">R</div>
-                                            </div>
-                                            <div class="d-flex flex-column">
-                                                <a href="#" class="text-gray-800 text-hover-primary mb-1 fw-bold">Reza Gunawan</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>reza@example.com</td>
-                                    <td>0812-3456-7890</td>
-                                    <td><span class="badge badge-light-success">Aktif</span></td>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm btn-light btn-active-light-primary">Detail</button>
-                                    </td>
-                                </tr>
+                            <tbody id="tbody_members">
                             </tbody>
                         </table>
                     </div>
@@ -96,7 +83,7 @@
                                             <i class="ki-duotone ki-cross-circle text-danger fs-2"><span class="path1"></span><span class="path2"></span></i>
                                         </div>
                                     </div>
-                                    <div class="text-danger fs-7 mt-2 d-none" id="email_error">Email ini sudah jadi member, bro!</div>
+                                    <div class="text-danger fs-7 mt-2 d-none" id="email_error">Validasi gagal!</div>
                                 </div>
                                 <div class="fv-row mb-10">
                                     <label class="required fw-semibold fs-6 mb-2">Password</label>
@@ -112,7 +99,7 @@
                                     <input type="text" class="form-control form-control-solid" id="input_nama" placeholder="Masukkan nama lengkap" autocomplete="off" />
                                 </div>
                                 <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">No. Handphone (WhatsApp)</label>
+                                    <label class="fw-semibold fs-6 mb-2">No. Handphone (WhatsApp)</label>
                                     <input type="text" class="form-control form-control-solid" id="input_hp" placeholder="08XX-XXXX-XXXX" autocomplete="off" />
                                 </div>
                                 <div class="fv-row mb-10">
@@ -196,7 +183,7 @@
                                         <div class="fs-6 text-white text-uppercase tracking-widest font-monospace" id="preview_id">####-####</div>
                                     </div>
                                     <div class="bg-white p-1 rounded d-none" id="preview_qr">
-                                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=MBR-NEW" alt="QR" class="w-60px h-60px" />
+                                        <img src="" id="qr_img" alt="QR" class="w-60px h-60px" />
                                     </div>
                                 </div>
                             </div>
@@ -221,6 +208,7 @@
         const previewNama = document.getElementById('preview_nama');
         const previewId = document.getElementById('preview_id');
         const previewQr = document.getElementById('preview_qr');
+        const qrImg = document.getElementById('qr_img');
         
         const emailError = document.getElementById('email_error');
         const emailFeedback = document.getElementById('email_feedback');
@@ -231,9 +219,76 @@
         const successEmail = document.getElementById('success_email');
         const modalTitle = document.getElementById('modal_title');
 
+        const tbodyMembers = document.getElementById('tbody_members');
+        const searchInput = document.getElementById('search_input');
+
+        let membersData = [];
+
+        document.addEventListener('DOMContentLoaded', fetchMembers);
+
         modalEl.addEventListener('shown.bs.modal', function () {
             inNama.focus();
         });
+
+        async function fetchMembers() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) return;
+
+                const res = await fetch('/api/semua-members', {
+                    headers: { 
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const json = await res.json();
+                if(json.success) {
+                    membersData = json.data;
+                    renderTable(membersData);
+                }
+            } catch(e) {
+                Swal.fire('Error', 'Gagal memuat data member', 'error');
+            }
+        }
+
+        searchInput.addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            const filtered = membersData.filter(m => 
+                m.name.toLowerCase().includes(q) || 
+                (m.member_code && m.member_code.toLowerCase().includes(q))
+            );
+            renderTable(filtered);
+        });
+
+        function renderTable(data) {
+            tbodyMembers.innerHTML = data.map(m => `
+                <tr>
+                    <td><span class="fw-bold text-gray-800">${m.member_code || '-'}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                                <div class="symbol-label fs-3 bg-light-primary text-primary">${m.name.charAt(0).toUpperCase()}</div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="#" class="text-gray-800 text-hover-primary mb-1 fw-bold">${esc(m.name)}</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${esc(m.phone || '-')}</td>
+                    <td>${esc(m.address || '-')}</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-light btn-active-light-primary">Detail</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function esc(s) { 
+            if (!s) return ''; 
+            const d = document.createElement('div'); 
+            d.textContent = s; 
+            return d.innerHTML; 
+        }
 
         function openAddModal() {
             resetForm();
@@ -249,19 +304,6 @@
             e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2] + (x[3] ? '-' + x[3] : '');
         });
 
-        inEmail.addEventListener('input', function() {
-            const val = this.value;
-            if (val === 'admin@admin.com' || val === 'sudah@member.com') {
-                this.classList.add('is-invalid');
-                emailError.classList.remove('d-none');
-                emailFeedback.classList.remove('d-none');
-            } else {
-                this.classList.remove('is-invalid');
-                emailError.classList.add('d-none');
-                emailFeedback.classList.add('d-none');
-            }
-        });
-
         function generatePassword() {
             const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#";
             let pass = "";
@@ -271,32 +313,71 @@
             inPass.value = pass;
         }
 
-        function simpanMember() {
-            if(!inNama.value || !inEmail.value || !inHp.value || !inPass.value) {
-                Swal.fire('Oops!', 'Harap lengkapi semua data wajib.', 'warning');
+        async function simpanMember() {
+            if(!inNama.value || !inEmail.value || !inPass.value) {
+                Swal.fire('Oops!', 'Nama, Email, dan Password wajib diisi.', 'warning');
                 return;
             }
-            if(inEmail.classList.contains('is-invalid')) {
-                Swal.fire('Oops!', 'Gunakan email lain.', 'warning');
-                return;
-            }
+
+            emailError.classList.add('d-none');
+            emailFeedback.classList.add('d-none');
+            inEmail.classList.remove('is-invalid');
 
             btnSimpan.setAttribute('data-kt-indicator', 'on');
             btnSimpan.disabled = true;
 
-            setTimeout(() => {
+            const payload = {
+                name: inNama.value,
+                email: inEmail.value,
+                password: inPass.value,
+                phone: inHp.value,
+                address: inAlamat.value
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch('/api/tambah-member', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const json = await res.json();
+
                 btnSimpan.removeAttribute('data-kt-indicator');
                 btnSimpan.disabled = false;
-                
-                successEmail.textContent = inEmail.value;
-                stepForm.classList.add('d-none');
-                stepSuccess.classList.remove('d-none');
-                
-                modalTitle.textContent = "Pendaftaran Sukses";
-                previewId.textContent = "MBR-" + Math.floor(1000 + Math.random() * 9000);
-                previewQr.classList.remove('d-none');
-                
-            }, 1200);
+
+                if(res.ok && json.success) {
+                    successEmail.textContent = payload.email;
+                    stepForm.classList.add('d-none');
+                    stepSuccess.classList.remove('d-none');
+                    
+                    const code = json.data.member.member_code;
+                    modalTitle.textContent = "Pendaftaran Sukses";
+                    previewId.textContent = code;
+                    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${code}`;
+                    previewQr.classList.remove('d-none');
+
+                    fetchMembers();
+                } else {
+                    if(json.errors && json.errors.email) {
+                        inEmail.classList.add('is-invalid');
+                        emailError.textContent = json.errors.email[0];
+                        emailError.classList.remove('d-none');
+                        emailFeedback.classList.remove('d-none');
+                    } else {
+                        Swal.fire('Error', json.message || 'Gagal menyimpan.', 'error');
+                    }
+                }
+            } catch (e) {
+                btnSimpan.removeAttribute('data-kt-indicator');
+                btnSimpan.disabled = false;
+                Swal.fire('Error', 'Kesalahan jaringan', 'error');
+            }
         }
 
         function resetForm() {
@@ -320,13 +401,13 @@
         }
 
         function printCard() {
-            Swal.fire('Mencetak...', 'Sedang memproses ID Card fisik...', 'info');
+            Swal.fire('Mencetak...', 'Fitur cetak ID Card akan segera hadir.', 'info');
         }
 
         function copyCredentials() {
             const text = `Halo ${inNama.value},\n\nAkun perpustakaan Anda telah aktif.\nEmail: ${inEmail.value}\nPassword: ${inPass.value}\n\nHarap ganti password saat login pertama kali.`;
             navigator.clipboard.writeText(text).then(() => {
-                Swal.fire('Tercopy!', 'Kredensial siap di-paste ke WhatsApp.', 'success');
+                Swal.fire('Tercopy!', 'Kredensial siap disalin ke WhatsApp.', 'success');
             });
         }
 

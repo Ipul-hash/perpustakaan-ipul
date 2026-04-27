@@ -115,7 +115,14 @@
     @push('scripts')
     <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const API = '/api/admin';
+        const userDataStr = localStorage.getItem('user_data');
+        let isAdmin = false;
+        if (userDataStr) {
+            const user = JSON.parse(userDataStr);
+            isAdmin = user.roles && user.roles.includes('admin');
+        }
+        
+        const API = isAdmin ? '/api/admin' : '/api/staff';
         
         let activeLoans = [];
         let historyReturns = [];
@@ -127,7 +134,11 @@
 
         async function fetchActiveLoans() {
             try {
-                const res = await fetch(`${API}/loans-dipinjam`);
+                const token = localStorage.getItem('auth_token');
+                if (!token) { window.location.href = '/login'; return; }
+                const res = await fetch(`${API}/loans-dipinjam`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
                 const json = await res.json();
                 if (json.success) {
                     activeLoans = json.data;
@@ -140,7 +151,10 @@
 
         async function fetchHistoryReturns() {
             try {
-                const res = await fetch(`${API}/semua-returns`);
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch(`${API}/semua-returns`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
                 const json = await res.json();
                 if (json.success) {
                     historyReturns = json.data;
@@ -261,10 +275,12 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
+                        const token = localStorage.getItem('auth_token');
                         const res = await fetch(`${API}/proses-pengembalian/${id}`, {
                             method: 'PUT',
                             headers: { 
                                 'Accept': 'application/json',
+                                'Authorization': `Bearer ${token}`,
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content 
                             }
                         });
@@ -296,10 +312,12 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
+                        const token = localStorage.getItem('auth_token');
                         const res = await fetch(`${API}/bayar-denda/${fineId}`, {
                             method: 'PUT',
                             headers: { 
                                 'Accept': 'application/json',
+                                'Authorization': `Bearer ${token}`,
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content 
                             }
                         });

@@ -144,29 +144,49 @@
         const alertBox  = document.getElementById('alert-error');
         const alertText = document.getElementById('alert-error-text');
 
-        form.addEventListener('submit', function (e) {
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const email    = document.getElementById('input-email').value.trim();
             const password = document.getElementById('input-password').value;
 
-            // Validasi sederhana
             if (!email || !password) {
                 showError('Email dan password wajib diisi.');
                 return;
             }
 
-            // Loading state
             btn.setAttribute('data-kt-indicator', 'on');
             btn.disabled = true;
             alertBox.classList.add('d-none');
 
-            // Simulasi login (belum ada logic backend)
-            // Ganti dengan fetch ke API login nanti
-            setTimeout(function () {
-                // Untuk sekarang, redirect ke dashboard langsung
-                window.location.href = '/dashboard';
-            }, 1500);
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const json = await response.json();
+
+                btn.removeAttribute('data-kt-indicator');
+                btn.disabled = false;
+
+                if (response.ok && json.success) {
+                    localStorage.setItem('auth_token', json.data.token);
+                    localStorage.setItem('user_data', JSON.stringify(json.data.user));
+                    window.location.href = '/dashboard';
+                } else {
+                    showError(json.message || 'Email atau password salah.');
+                }
+            } catch (error) {
+                btn.removeAttribute('data-kt-indicator');
+                btn.disabled = false;
+                showError('Terjadi kesalahan jaringan.');
+            }
         });
 
         function showError(msg) {
@@ -175,7 +195,6 @@
             alertBox.classList.add('d-flex');
         }
 
-        // Info belum punya akun
         document.getElementById('btn-belum-akun').addEventListener('click', function (e) {
             e.preventDefault();
             Swal.fire({

@@ -204,7 +204,17 @@
         async function fetchCategories() {
             showLoading();
             try {
-                const res  = await fetch(`${API_BASE}/semua-categories`);
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const res  = await fetch(`${API_BASE}/semua-categories`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 const json = await res.json();
 
                 if (json.success) {
@@ -398,11 +408,13 @@
                     method = 'POST';
                 }
 
+                const token = localStorage.getItem('auth_token');
                 const res = await fetch(url, {
                     method,
                     headers: {
                         'Content-Type':  'application/json',
                         'Accept':        'application/json',
+                        'Authorization': `Bearer ${token}`,
                         'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]')?.content || '',
                     },
                     body: JSON.stringify(payload),
@@ -458,10 +470,12 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
+                        const token = localStorage.getItem('auth_token');
                         const res = await fetch(`${API_BASE}/hapus-category/${id}`, {
                             method: 'DELETE',
                             headers: {
                                 'Accept': 'application/json',
+                                'Authorization': `Bearer ${token}`,
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                             },
                         });

@@ -43,4 +43,26 @@ class LoanController extends Controller
             ], 422);
         }
     }
+    public function pinjamBuku(Request $request)
+    {
+        $request->validate([
+            'book_id'   => 'required|exists:books,id',
+            'member_id' => 'required|exists:members,id',
+        ]);
+
+        try {
+            $loan = $this->loanService->staffPinjam($request->all());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Peminjaman berhasil dicatat.',
+                'data'    => $loan,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
 }

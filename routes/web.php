@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\MemberPageController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,3 +19,11 @@ Route::get('/manajemen-peminjaman', [PageController::class, 'manajemenPeminjam']
 Route::get('/manajemen-pengembalian', [PageController::class, 'manajemenPengembalian'])->name('manajemenPengembalian');
 Route::get('/manajemen-anggota', [PageController::class, 'manajemenAnggota'])->name('manajemenAnggota');
 Route::get('/manajemen-member', [PageController::class, 'manajemenMember'])->name('manajemenMember');
+Route::get('/pinjam-buku', [PageController::class, 'pinjamBuku'])->name('pinjamBuku');
+
+// Route khusus Member
+Route::prefix('member')->group(function () {
+    Route::get('/dashboard', [MemberPageController::class, 'dashboard'])->name('member.dashboard');
+    Route::get('/pinjam-buku', [MemberPageController::class, 'pinjamBuku'])->name('member.pinjamBuku');
+    Route::get('/riwayat', [MemberPageController::class, 'riwayat'])->name('member.riwayat');
+});

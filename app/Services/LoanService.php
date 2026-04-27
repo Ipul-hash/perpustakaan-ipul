@@ -152,6 +152,28 @@ class LoanService
         });
     }
 
+    public function staffPinjam(array $data): Loan
+    {
+        $member = Member::findOrFail($data['member_id']);
+        $book   = Book::findOrFail($data['book_id']);
+
+        $this->validateAll($member->id, $book);
+
+        return DB::transaction(function () use ($book, $member) {
+            $loan = Loan::create([
+                'book_id'   => $book->id,
+                'member_id' => $member->id,
+                'loan_date' => Carbon::now(),
+                'due_date'  => Carbon::now()->addDays(self::LOAN_DURATION_DAYS),
+                'status'    => self::STATUS_BORROWED,
+            ]);
+
+            $book->decrement('stock');
+
+            return $loan->load(['book', 'member']);
+        });
+    }
+
     public function batalkanLoan(int $loanId): Loan
     {
         $loan = Loan::findOrFail($loanId);

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Member extends Model
 {
-    protected $fillable = ['member_code', 'name', 'address', 'phone'];
+    protected $fillable = ['user_id', 'member_code', 'name', 'address', 'phone'];
 
     public function loans(): HasMany
     {

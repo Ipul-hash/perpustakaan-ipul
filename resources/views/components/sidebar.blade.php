@@ -21,14 +21,14 @@
             <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold px-3" id="#kt_app_sidebar_menu" data-kt-menu="true" data-kt-menu-expand="false">
 
                 {{-- Heading: Menu Utama --}}
-                <div class="menu-item pt-5">
+                <div class="menu-item pt-5 d-none" data-roles="admin,staff,member">
                     <div class="menu-content">
                         <span class="menu-heading fw-bold text-uppercase fs-7">Menu Utama</span>
                     </div>
                 </div>
 
-                {{-- Dashboard --}}
-                <div class="menu-item">
+                {{-- Dashboard Admin/Staff --}}
+                <div class="menu-item d-none" data-roles="admin,staff">
                     <a class="menu-link {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-element-11 fs-2">
@@ -42,9 +42,39 @@
                     </a>
                 </div>
 
-                {{-- Koleksi Buku --}}
-                <div class="menu-item">
-                    <a class="menu-link" href="#">
+                {{-- Dashboard Member --}}
+                <div class="menu-item d-none" data-roles="member">
+                    <a class="menu-link {{ request()->is('member/dashboard') ? 'active' : '' }}" href="/member/dashboard">
+                        <span class="menu-icon">
+                            <i class="ki-duotone ki-element-11 fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                                <span class="path4"></span>
+                            </i>
+                        </span>
+                        <span class="menu-title">Dashboard</span>
+                    </a>
+                </div>
+
+                {{-- Koleksi Buku Admin/Staff --}}
+                <div class="menu-item d-none" data-roles="admin,staff">
+                    <a class="menu-link {{ request()->is('pinjam-buku') ? 'active' : '' }}" href="/pinjam-buku">
+                        <span class="menu-icon">
+                            <i class="ki-duotone ki-book fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                                <span class="path4"></span>
+                            </i>
+                        </span>
+                        <span class="menu-title">Pinjam Buku</span>
+                    </a>
+                </div>
+
+                {{-- Koleksi Buku Member --}}
+                <div class="menu-item d-none" data-roles="member">
+                    <a class="menu-link {{ request()->is('member/pinjam-buku') ? 'active' : '' }}" href="/member/pinjam-buku">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-book fs-2">
                                 <span class="path1"></span>
@@ -57,14 +87,27 @@
                     </a>
                 </div>
 
+                {{-- Riwayat Member --}}
+                <div class="menu-item d-none" data-roles="member">
+                    <a class="menu-link {{ request()->is('member/riwayat') ? 'active' : '' }}" href="/member/riwayat">
+                        <span class="menu-icon">
+                            <i class="ki-duotone ki-time fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </span>
+                        <span class="menu-title">Riwayat & Denda</span>
+                    </a>
+                </div>
+
                 {{-- Heading: Master Data --}}
-                <div class="menu-item pt-5">
+                <div class="menu-item pt-5 d-none" data-roles="admin,staff">
                     <div class="menu-content">
                         <span class="menu-heading fw-bold text-uppercase fs-7">Master Data</span>
                     </div>
                 </div>
 
-                <div class="menu-item">
+                <div class="menu-item d-none" data-roles="admin,staff">
                     <a class="menu-link {{ request()->is('manajemen-buku') ? 'active' : '' }}" href="/manajemen-buku">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-book fs-2">
@@ -79,7 +122,7 @@
                 </div>
 
                 {{-- Manajemen Kategori --}}
-                <div class="menu-item">
+                <div class="menu-item d-none" data-roles="admin">
                     <a class="menu-link {{ request()->is('manajemen-kategori') ? 'active' : '' }}" href="/manajemen-kategori">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-category fs-2">
@@ -94,14 +137,14 @@
                 </div>
 
                 {{-- Heading: Sirkulasi --}}
-                <div class="menu-item pt-5">
+                <div class="menu-item pt-5 d-none" data-roles="admin,staff">
                     <div class="menu-content">
                         <span class="menu-heading fw-bold text-uppercase fs-7">Sirkulasi</span>
                     </div>
                 </div>
 
                 {{-- Peminjaman --}}
-                <div class="menu-item">
+                <div class="menu-item d-none" data-roles="admin,staff">
                     <a class="menu-link {{ request()->is('manajemen-peminjaman') ? 'active' : '' }}" href="/manajemen-peminjaman">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-handcart fs-2">
@@ -114,7 +157,7 @@
                 </div>
 
                 {{-- Pengembalian --}}
-                <div class="menu-item">
+                <div class="menu-item d-none" data-roles="admin,staff">
                     <a class="menu-link {{ request()->is('manajemen-pengembalian') ? 'active' : '' }}" href="/manajemen-pengembalian">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-arrows-loop fs-2">
@@ -127,14 +170,14 @@
                 </div>
 
                 {{-- Heading: Pengguna --}}
-                <div class="menu-item pt-5">
+                <div class="menu-item pt-5 d-none" data-roles="admin,staff">
                     <div class="menu-content">
                         <span class="menu-heading fw-bold text-uppercase fs-7">Pengguna</span>
                     </div>
                 </div>
 
                 {{-- Anggota --}}
-                <div class="menu-item">
+                <div class="menu-item d-none" data-roles="admin">
                     <a class="menu-link {{ request()->is('manajemen-anggota') ? 'active' : '' }}" href="/manajemen-anggota">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-security-user fs-2">
@@ -147,7 +190,7 @@
                 </div>
 
                 {{-- Petugas --}}
-                <div class="menu-item">
+                <div class="menu-item d-none" data-roles="admin,staff">
                     <a class="menu-link {{ request()->is('manajemen-member') ? 'active' : '' }}" href="/manajemen-member">
                         <span class="menu-icon">
                             <i class="ki-duotone ki-people fs-2">
@@ -162,48 +205,10 @@
                         <span class="menu-title">Member</span>
                     </a>
                 </div>
-
-                {{-- Heading: Lainnya --}}
-                <div class="menu-item pt-5">
-                    <div class="menu-content">
-                        <span class="menu-heading fw-bold text-uppercase fs-7">Lainnya</span>
-                    </div>
-                </div>
-
-                {{-- Laporan --}}
-                <div class="menu-item">
-                    <a class="menu-link" href="#">
-                        <span class="menu-icon">
-                            <i class="ki-duotone ki-graph-up fs-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                                <span class="path4"></span>
-                                <span class="path5"></span>
-                                <span class="path6"></span>
-                            </i>
-                        </span>
-                        <span class="menu-title">Laporan</span>
-                    </a>
-                </div>
-
-                {{-- Pengaturan --}}
-                <div class="menu-item">
-                    <a class="menu-link" href="#">
-                        <span class="menu-icon">
-                            <i class="ki-duotone ki-setting-2 fs-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-                        </span>
-                        <span class="menu-title">Pengaturan</span>
-                    </a>
-                </div>
-
             </div>
         </div>
     </div>
-
+    
     {{-- Footer --}}
     <div class="app-sidebar-footer flex-column-auto pt-2 pb-6 px-6" id="kt_app_sidebar_footer">
         <a href="#" class="btn btn-flex flex-center btn-custom btn-primary overflow-hidden text-nowrap px-0 h-40px w-100" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss-="click" title="Bantuan & Dukungan">
@@ -216,3 +221,27 @@
         </a>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const userDataStr = localStorage.getItem('user_data');
+        if (userDataStr) {
+            try {
+                const userData = JSON.parse(userDataStr);
+                const userRoles = userData.roles || [];
+                
+                const menuItems = document.querySelectorAll('.menu-item[data-roles]');
+                menuItems.forEach(item => {
+                    const roles = item.getAttribute('data-roles').split(',');
+                    const hasAccess = userRoles.some(role => roles.includes(role));
+                    
+                    if (hasAccess) {
+                        item.classList.remove('d-none');
+                    }
+                });
+            } catch (e) {
+                console.error('Failed to parse user data from localStorage');
+            }
+        }
+    });
+</script>

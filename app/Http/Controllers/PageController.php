@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    
+
     public function dashboard()
     {
         return view('admin.dashboard');
@@ -40,6 +40,11 @@ class PageController extends Controller
     public function manajemenMember()
     {
         return view('admin.manajemenmember');
+    }
+
+    public function pinjamBuku()
+    {
+        return view('admin.pinjambuku');
     }
 
 

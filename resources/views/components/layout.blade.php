@@ -100,8 +100,8 @@
                                                 <img alt="Avatar" src="{{ asset('assets/media/avatars/300-1.jpg') }}" />
                                             </div>
                                             <div class="d-flex flex-column">
-                                                <div class="fw-bold d-flex align-items-center fs-5">Admin Perpustakaan</div>
-                                                <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">admin@perpustakaan.id</a>
+                                                <div class="fw-bold d-flex align-items-center fs-5" id="topbar-user-name">Memuat...</div>
+                                                <a href="#" class="fw-semibold text-muted text-hover-primary fs-7" id="topbar-user-email">...</a>
                                             </div>
                                         </div>
                                     </div>
@@ -110,7 +110,7 @@
                                         <a href="#" class="menu-link px-5">Profil Saya</a>
                                     </div>
                                     <div class="menu-item px-5">
-                                        <a href="#" class="menu-link px-5">Keluar</a>
+                                        <a href="#" id="btn-logout" class="menu-link px-5">Keluar</a>
                                     </div>
                                 </div>
                             </div>
@@ -205,6 +205,51 @@
             }
         });
     })();
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const token = localStorage.getItem('auth_token');
+        const userDataStr = localStorage.getItem('user_data');
+        
+        // Render user info in topbar
+        if (userDataStr) {
+            try {
+                const user = JSON.parse(userDataStr);
+                const nameEl = document.getElementById('topbar-user-name');
+                const emailEl = document.getElementById('topbar-user-email');
+                if (nameEl) nameEl.textContent = user.name;
+                if (emailEl) emailEl.textContent = user.email;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Handle Logout
+        const btnLogout = document.getElementById('btn-logout');
+        if (btnLogout) {
+            btnLogout.addEventListener('click', async function (e) {
+                e.preventDefault();
+                if (token) {
+                    try {
+                        await fetch('/api/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            }
+                        });
+                    } catch (err) {
+                        console.error('Logout error', err);
+                    }
+                }
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('user_data');
+                window.location.href = '/login';
+            });
+        }
+    });
     </script>
 
     @stack('scripts')

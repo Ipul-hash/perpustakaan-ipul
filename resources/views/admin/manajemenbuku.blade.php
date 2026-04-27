@@ -181,7 +181,11 @@
         // ====== FETCH CATEGORIES dari API ======
         async function fetchCategories() {
             try {
-                const res = await fetch(`${API}/semua-categories`);
+                const token = localStorage.getItem('auth_token');
+                if (!token) { window.location.href = '/login'; return; }
+                const res = await fetch(`${API}/semua-categories`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
                 const json = await res.json();
                 if (json.success) {
                     allCategories = json.data;
@@ -209,7 +213,10 @@
         async function fetchBooks() {
             showLoading();
             try {
-                const res = await fetch(`${API}/semua-buku`);
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch(`${API}/semua-buku`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
                 const json = await res.json();
                 if (json.success) {
                     allBooks = json.data;
@@ -343,7 +350,8 @@
             try {
                 const url = id ? `${API}/update-buku/${id}` : `${API}/tambah-buku`;
                 const method = id ? 'PUT' : 'POST';
-                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }, body: JSON.stringify(payload) });
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' }, body: JSON.stringify(payload) });
                 const json = await res.json();
                 if (json.success) { modal.hide(); Swal.fire({ icon: 'success', title: 'Berhasil!', text: json.message, timer: 1500, showConfirmButton: false }); fetchBooks(); }
                 else { Swal.fire({ icon: 'error', title: 'Gagal', text: json.message || 'Terjadi kesalahan.' }); }
@@ -395,7 +403,8 @@
             Swal.fire({ title: 'Hapus buku ini?', html: `Buku <strong>${esc(title)}</strong> akan dihapus permanen.`, icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, hapus', cancelButtonText: 'Batal', customClass: { confirmButton: 'btn btn-danger', cancelButton: 'btn btn-light' } }).then(async (r) => {
                 if (r.isConfirmed) {
                     try {
-                        const res = await fetch(`${API}/hapus-buku/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' } });
+                        const token = localStorage.getItem('auth_token');
+                        const res = await fetch(`${API}/hapus-buku/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}`, 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' } });
                         const json = await res.json();
                         Swal.fire({ icon: 'success', title: 'Dihapus!', text: json.message, timer: 1500, showConfirmButton: false });
                         fetchBooks();

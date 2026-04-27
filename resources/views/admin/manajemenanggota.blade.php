@@ -57,55 +57,7 @@
                                             <th class="text-end min-w-100px">Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="text-gray-600 fw-semibold">
-                                        <tr>
-                                            <td>1</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                        <div class="symbol-label fs-3 bg-light-primary text-primary">A</div>
-                                                    </div>
-                                                    <div class="d-flex flex-column">
-                                                        <a href="#" class="text-gray-800 text-hover-primary mb-1 fw-bold">Andi Saputra</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>andi@example.com</td>
-                                            <td>081234567890</td>
-                                            <td><span class="badge badge-light-success">Aktif</span></td>
-                                            <td class="text-end">
-                                                <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Aksi <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
-                                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
-                                                    <div class="menu-item px-3"><a href="#" class="menu-link px-3"><i class="ki-duotone ki-eye fs-6 me-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Detail</a></div>
-                                                    <div class="menu-item px-3"><a href="#" class="menu-link px-3"><i class="ki-duotone ki-pencil fs-6 me-2"><span class="path1"></span><span class="path2"></span></i> Edit</a></div>
-                                                    <div class="menu-item px-3"><a href="#" class="menu-link px-3 text-danger"><i class="ki-duotone ki-trash fs-6 me-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i> Hapus</a></div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                                                        <div class="symbol-label fs-3 bg-light-danger text-danger">B</div>
-                                                    </div>
-                                                    <div class="d-flex flex-column">
-                                                        <a href="#" class="text-gray-800 text-hover-primary mb-1 fw-bold">Budi Santoso</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>budi@example.com</td>
-                                            <td>089876543210</td>
-                                            <td><span class="badge badge-light-danger">Nonaktif</span></td>
-                                            <td class="text-end">
-                                                <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Aksi <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
-                                                <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
-                                                    <div class="menu-item px-3"><a href="#" class="menu-link px-3"><i class="ki-duotone ki-eye fs-6 me-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Detail</a></div>
-                                                    <div class="menu-item px-3"><a href="#" class="menu-link px-3"><i class="ki-duotone ki-pencil fs-6 me-2"><span class="path1"></span><span class="path2"></span></i> Edit</a></div>
-                                                    <div class="menu-item px-3"><a href="#" class="menu-link px-3 text-danger"><i class="ki-duotone ki-trash fs-6 me-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i> Hapus</a></div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                    <tbody class="text-gray-600 fw-semibold" id="tbody-petugas">
                                     </tbody>
                                 </table>
                             </div>
@@ -119,32 +71,38 @@
         <div class="modal-dialog modal-dialog-centered mw-650px">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="fw-bold">Tambah Anggota</h2>
+                    <h2 class="fw-bold" id="modal-title">Tambah Petugas</h2>
                     <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
                         <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
                     </div>
                 </div>
                 <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                    <form>
+                    <form id="form-petugas">
+                        <input type="hidden" id="form-id" />
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Nama Anggota</label>
-                            <input type="text" class="form-control form-control-solid" placeholder="Masukkan nama anggota" />
+                            <input type="text" id="form-name" class="form-control form-control-solid" placeholder="Masukkan nama petugas" />
                         </div>
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Email</label>
-                            <input type="email" class="form-control form-control-solid" placeholder="Masukkan alamat email" />
+                            <input type="email" id="form-email" class="form-control form-control-solid" placeholder="Masukkan alamat email" />
+                        </div>
+                        <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Password</label>
+                            <input type="password" id="form-password" class="form-control form-control-solid" placeholder="Masukkan password (minimal 6 karakter)" />
+                            <div class="form-text">Kosongkan jika tidak ingin mengubah password saat edit.</div>
                         </div>
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">No. Telepon</label>
-                            <input type="text" class="form-control form-control-solid" placeholder="Masukkan nomor telepon" />
+                            <input type="text" id="form-phone" class="form-control form-control-solid" placeholder="Masukkan nomor telepon" />
                         </div>
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Alamat</label>
-                            <textarea class="form-control form-control-solid" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
+                            <label class="fw-semibold fs-6 mb-2">Alamat</label>
+                            <textarea id="form-address" class="form-control form-control-solid" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
                         </div>
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Status</label>
-                            <select class="form-select form-select-solid">
+                            <select id="form-status" class="form-select form-select-solid">
                                 <option value="active">Aktif</option>
                                 <option value="inactive">Nonaktif</option>
                             </select>
@@ -153,11 +111,219 @@
                 </div>
                 <div class="modal-footer flex-center">
                     <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <button type="button" id="btn-simpan" class="btn btn-primary">
                         <span class="indicator-label">Simpan</span>
+                        <span class="indicator-progress">Menyimpan...<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const API = '/api/admin';
+        let allPetugas = [];
+        
+        const tbody = document.getElementById('tbody-petugas');
+        const modalEl = document.getElementById('modal-anggota');
+        const modal = new bootstrap.Modal(modalEl);
+        const searchInput = document.querySelector('input[placeholder="Cari anggota..."]');
+        const statusFilter = document.querySelector('select:not(#form-status)');
+        
+        async function fetchData() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) { window.location.href = '/login'; return; }
+                
+                const res = await fetch(`${API}/semua-petugas`, {
+                    headers: { 'Accept': 'application/json', 'Authorization': `Bearer ${token}` }
+                });
+                const json = await res.json();
+                if (json.success) {
+                    allPetugas = json.data;
+                    renderTable();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function renderTable() {
+            const q = searchInput.value.toLowerCase();
+            const s = statusFilter.value;
+            
+            let filtered = allPetugas;
+            if (s) filtered = filtered.filter(p => p.status === s);
+            if (q) filtered = filtered.filter(p => 
+                (p.name && p.name.toLowerCase().includes(q)) || 
+                (p.email && p.email.toLowerCase().includes(q))
+            );
+            
+            if (!filtered.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-5">Belum ada data petugas.</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = filtered.map((p, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="symbol symbol-circle symbol-50px overflow-hidden me-3">
+                                <div class="symbol-label fs-3 bg-light-primary text-primary">${p.name ? p.name.charAt(0).toUpperCase() : '?'}</div>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <span class="text-gray-800 fw-bold mb-1">${esc(p.name)}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${esc(p.email)}</td>
+                    <td>${esc(p.phone || '-')}</td>
+                    <td><span class="badge ${p.status === 'active' ? 'badge-light-success' : 'badge-light-danger'}">${p.status === 'active' ? 'Aktif' : 'Nonaktif'}</span></td>
+                    <td class="text-end">
+                        <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Aksi <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
+                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+                            <div class="menu-item px-3"><a href="#" class="menu-link px-3" onclick="editPetugas(${p.id}); return false;"><i class="ki-duotone ki-pencil fs-6 me-2"></i> Edit</a></div>
+                            <div class="menu-item px-3"><a href="#" class="menu-link px-3 text-danger" onclick="hapusPetugas(${p.id}, '${esc(p.name)}'); return false;"><i class="ki-duotone ki-trash fs-6 me-2"></i> Hapus</a></div>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            KTMenu.init();
+        }
+
+        searchInput.addEventListener('input', renderTable);
+        statusFilter.addEventListener('change', renderTable);
+
+        document.querySelector('button[data-bs-target="#modal-anggota"]').addEventListener('click', () => {
+            document.getElementById('form-petugas').reset();
+            document.getElementById('form-id').value = '';
+            document.getElementById('modal-title').textContent = 'Tambah Petugas';
+        });
+
+        document.getElementById('btn-simpan').addEventListener('click', async function () {
+            const btn = this;
+            const id = document.getElementById('form-id').value;
+            const payload = {
+                name: document.getElementById('form-name').value,
+                email: document.getElementById('form-email').value,
+                phone: document.getElementById('form-phone').value,
+                address: document.getElementById('form-address').value,
+                status: document.getElementById('form-status').value
+            };
+            
+            const password = document.getElementById('form-password').value;
+            if (password) {
+                payload.password = password;
+            }
+            
+            if (!payload.name || !payload.email) {
+                Swal.fire({ icon: 'warning', title: 'Oops', text: 'Nama dan Email wajib diisi.' });
+                return;
+            }
+
+            if (!id && !payload.password) {
+                Swal.fire({ icon: 'warning', title: 'Oops', text: 'Password wajib diisi untuk anggota baru.' });
+                return;
+            }
+            
+            btn.setAttribute('data-kt-indicator', 'on');
+            btn.disabled = true;
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const url = id ? `${API}/update-petugas/${id}` : `${API}/tambah-petugas`;
+                const method = id ? 'PUT' : 'POST';
+                
+                const res = await fetch(url, {
+                    method,
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const json = await res.json();
+                
+                if (json.success) {
+                    modal.hide();
+                    Swal.fire({ icon: 'success', title: 'Berhasil!', text: json.message, timer: 1500, showConfirmButton: false });
+                    fetchData();
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Gagal', text: json.message || 'Terjadi kesalahan.' });
+                }
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Tidak bisa terhubung ke server.' });
+            } finally {
+                btn.removeAttribute('data-kt-indicator');
+                btn.disabled = false;
+            }
+        });
+
+        window.editPetugas = function (id) {
+            const p = allPetugas.find(x => x.id === id);
+            if (!p) return;
+            
+            document.getElementById('form-id').value = p.id;
+            document.getElementById('form-name').value = p.name;
+            document.getElementById('form-email').value = p.email;
+            document.getElementById('form-password').value = '';
+            document.getElementById('form-phone').value = p.phone || '';
+            document.getElementById('form-address').value = p.address || '';
+            document.getElementById('form-status').value = p.status || 'active';
+            
+            document.getElementById('modal-title').textContent = 'Edit Petugas';
+            modal.show();
+        };
+
+        window.hapusPetugas = function (id, name) {
+            Swal.fire({
+                title: 'Hapus Petugas?',
+                text: `Petugas ${name} akan dihapus.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: { confirmButton: 'btn btn-danger', cancelButton: 'btn btn-light' }
+            }).then(async (r) => {
+                if (r.isConfirmed) {
+                    try {
+                        const token = localStorage.getItem('auth_token');
+                        const res = await fetch(`${API}/hapus-petugas/${id}`, {
+                            method: 'DELETE',
+                            headers: { 
+                                'Accept': 'application/json',
+                                'Authorization': `Bearer ${token}`,
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            }
+                        });
+                        const json = await res.json();
+                        if (json.success) {
+                            Swal.fire({ icon: 'success', title: 'Terhapus!', text: json.message, timer: 1500, showConfirmButton: false });
+                            fetchData();
+                        } else {
+                            Swal.fire({ icon: 'error', title: 'Gagal', text: json.message });
+                        }
+                    } catch (e) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Tidak bisa terhubung.' });
+                    }
+                }
+            });
+        };
+
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        fetchData();
+    });
+    </script>
+    @endpush
 </x-layout>
