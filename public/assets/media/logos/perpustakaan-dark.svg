@@ -1,0 +1,8 @@
+<svg width="180" height="36" viewBox="0 0 180 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon buku terbuka -->
+  <rect x="2" y="6" width="11" height="24" rx="2" fill="#3E97FF"/>
+  <rect x="15" y="6" width="11" height="24" rx="2" fill="#3E97FF" opacity="0.5"/>
+  <path d="M8 2 L13.5 6 L19 2" stroke="#3E97FF" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- Teks -->
+  <text x="34" y="24" font-family="Inter, sans-serif" font-weight="700" font-size="17" fill="white" letter-spacing="0.5">Perpustakaan</text>
+</svg>
